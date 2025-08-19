@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
+import axios from "../inc/axios";
 
 const Cards = () => {
   const [articles, setArticles] = useState([]);
-  const apiKey = import.meta.env.VITE_NEWS_API_KEY;
+  const apiKey = import.meta.env.VITE_NEWS_API_KEY; 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `https://newsapi.org/v2/everything?q=tesla&sortBy=publishedAt&pageSize=12&apiKey=${apiKey}`
+        // Make the GET request using axios
+        const response = await axios.get(
+          `/v2/everything?q=tesla&sortBy=publishedAt&pageSize=12&apiKey=${apiKey}`
         );
-        const data = await response.json();
-        setArticles(data.articles || []);
+
+        setArticles(response.data.articles || []); 
       } catch (error) {
         console.error("Error fetching news:", error);
       }
@@ -19,10 +21,11 @@ const Cards = () => {
 
     fetchData();
   }, [apiKey]);
-
   return (
     <section className="max-w-7xl mx-auto px-4 py-16">
-      <h2 className="text-4xl font-bold text-center text-blue-700 mb-12">🔋 Tesla News Highlights</h2>
+      <h2 className="text-4xl font-bold text-center text-blue-700 mb-12">
+        🔋 Tesla News Highlights
+      </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
         {articles.length > 0 ? (
@@ -33,7 +36,10 @@ const Cards = () => {
             >
               <div className="relative">
                 <img
-                  src={article.urlToImage || "https://via.placeholder.com/400x250?text=No+Image"}
+                  src={
+                    article.urlToImage ||
+                    "https://via.placeholder.com/400x250?text=No+Image"
+                  }
                   alt={article.title}
                   className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-105"
                 />
